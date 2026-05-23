@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>WebRTC Video Chat</title>
+    <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+    <style>
+        body {
+          font-family: 'Segoe UI', sans-serif;
+          background: linear-gradient(to right, #ff57ab, #764ba2);
+          color: white;
+          text-align: center;
+          padding: 20px;
+          margin: 0;
+        }
+
+        h1 {
+          font-size: 1.8em;
+          margin-bottom: 15px;
+        }
+
+        input, button {
+          padding: 10px;
+          margin: 5px;
+          border: none;
+          border-radius: 6px;
+          font-size: 1em;
+          max-width: 100%;
+          box-sizing: border-box;
+        }
+
+        input {
+          width: 240px;
+        }
+
+        button {
+          background-color: #3182ce;
+          color: white;
+          cursor: pointer;
+        }
+
+        button:hover {
+          background-color: #2b6cb0;
+        }
+
+        .video-container {
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 10px;
+          margin-top: 20px;
+        }
+
+        video {
+          width: 100%;
+          max-width: 320px;
+          height: auto;
+          border: 3px solid white;
+          border-radius: 8px;
+          background: black;
+          cursor: pointer;
+        }
+
+        .chat-box {
+          background: white;
+          color: black;
+          margin: 20px auto;
+          width: 90%;
+          max-width: 500px;
+          border-radius: 10px;
+          padding: 10px;
+          text-align: left;
+        }
+
+        #messages {
+          height: 150px;
+          overflow-y: scroll;
+          border: 1px solid #ccc;
+          padding: 5px;
+          margin-bottom: 10px;
+        }
+
+        #messages div {
+          margin: 5px 0;
+        }
+
+        .controls {
+          margin-top: 15px;
+          display: flex;
+          flex-wrap: wrap;
+          justify-content: center;
+          gap: 10px;
+        }
+
+        .toast {
+          position: fixed;
+          top: 20px;
+          right: 20px;
+          background: #000000cc;
+          color: white;
+          padding: 12px 20px;
+          border-radius: 8px;
+          font-size: 1em;
+          opacity: 0;
+          animation: fadeInOut 4s forwards;
+        }
+
+        @keyframes fadeInOut {
+          0% {opacity: 0;}
+          10% {opacity: 1;}
+          90% {opacity: 1;}
+          100% {opacity: 0;}
+        }
+
+        #login-section {
+          max-width: 400px;
+          margin: 100px auto;
+        }
+
+        #main-section {
+          display: none;
+        }
+
+        @media (max-width: 600px) {
+          h1 {
+            font-size: 1.4em;
+          }
+
+          input, button {
+            width: 90%;
+          }
+
+          .video-container {
+            flex-direction: column;
+            align-items: center;
+          }
+
+          .chat-box {
+            width: 95%;
+          }
+        }
+    </style>
+</head>
+<body>
+
+<div id="login-section">
+    <h1>🔐 Login </h1>
+    <input type="text" id="username" placeholder="Username" /><br/>
+    <input type="password" id="password" placeholder="Password" /><br/>
+    <button onclick="login()">Login</button>
+</div>
+
+<div id="main-section">
+    <h1>📹 WebRTC Video Chat</h1>
+
+    <p><strong>Your User ID:</strong> <span id="my-user-id"></span>
+        <button onclick="copyId()">📋 Copy</button>
+    </p>
+
+    <input type="text" id="peer-id" placeholder="Enter user-xxxx to call" />
+    <button onclick="startCall()">📞 Call</button>
+    <button onclick="endCall()">❌ End</button>
+    <button onclick="startScreenShare()">🖥️ Share Screen</button>
+    <button onclick="stopScreenShare()">🛑 Stop Share</button>
+
+    <div class="controls">
+        <button id="muteBtn" onclick="toggleMute()">🎤 Mute</button>
+        <button id="videoBtn" onclick="toggleVideo()">📷 Stop Video</button>
+    </div>
+
+    <div class="video-container">
+        <video id="my-video" autoplay muted></video>
+        <video id="remote-video" autoplay></video>
+    </div>
+
+    <div class="chat-box">
+        <strong>💬 Chat</strong>
+        <div id="messages"></div>
+        <input type="text" id="chat-input" placeholder="Type a message..." />
+        <button onclick="sendMessage()">Send</button>
+    </div>
+</div>
+
+<audio id="bell-sound" src="https://cdn.pixabay.com/download/audio/2022/03/28/audio_50b8c82e2b.mp3?filename=pop-alert-132047.mp3" preload="auto"></audio>
+
+<div id="toast-container"></div>
+
+<script src="script.js"></script>
+</body>
+</html>
